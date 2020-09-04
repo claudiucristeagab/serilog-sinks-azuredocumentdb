@@ -27,6 +27,7 @@ using Newtonsoft.Json.Serialization;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
+using Serilog.Sinks.AzureDocumentDB.Sinks.AzureDocumentDb;
 using Serilog.Sinks.Batch;
 using Serilog.Sinks.Extensions;
 
@@ -43,6 +44,7 @@ namespace Serilog.Sinks.AzureDocumentDb
         private DocumentCollection _collection;
         private Database _database;
         private readonly SemaphoreSlim _semaphoreSlim;
+        private readonly LogOptions _logOptions;
 
         public AzureDocumentDBSink(
             Uri endpointUri,
@@ -54,7 +56,9 @@ namespace Serilog.Sinks.AzureDocumentDb
             Protocol connectionProtocol,
             TimeSpan? timeToLive,
             int logBufferSize = 25_000,
-            int batchSize = 100) : base(batchSize, logBufferSize)
+            int batchSize = 100,
+            LogOptions logOptions = null 
+            ) : base(batchSize, logBufferSize)
         {
             _formatProvider   = formatProvider;
 
@@ -88,6 +92,7 @@ namespace Serilog.Sinks.AzureDocumentDb
 
                                               return settings;
                                           };
+            _logOptions = logOptions ?? new LogOptions();
         }
 
         private async Task CreateDatabaseIfNotExistsAsync(string databaseName)
@@ -170,7 +175,34 @@ namespace Serilog.Sinks.AzureDocumentDb
             if (logEventsBatch == null || logEventsBatch.Count == 0)
                 return true;
 
+            if (_logOptions != null && _logOptions.IncludedProperties.Any())
+            {
+                foreach (var logEvent in logEventsBatch)
+                {
+                    foreach (var logEventProperty in logEvent.Properties)
+                    {
+                        if (!_logOptions.IncludedProperties.Contains(logEventProperty.Key))
+                        {
+                            logEvent.RemovePropertyIfPresent(logEventProperty.Key);
+                        }
+                    }
+                }
+            }
+
             var args = logEventsBatch.Select(x => x.Dictionary(_storeTimestampInUtc, _formatProvider));
+
+            if (_logOptions != null && _logOptions.ExcludedStandardLogElements.Any())
+            {
+                args = args.Select(x =>
+                {
+                    foreach (var logOptionsExcludedLogElement in _logOptions.ExcludedStandardLogElements)
+                    {
+                        x.Remove(LogOptions.MapStandardLogToKey(logOptionsExcludedLogElement));
+                    }
+
+                    return x;
+                });
+            }
 
             if ((_timeToLive != null) && (_timeToLive > 0))
                 args = args.Select(

@@ -18,6 +18,7 @@ using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Sinks.AzureDocumentDb;
+using Serilog.Sinks.AzureDocumentDB.Sinks.AzureDocumentDb;
 
 namespace Serilog
 {
@@ -65,7 +66,8 @@ namespace Serilog
             TimeSpan? timeToLive = null,
             int logBufferSize = 25_000,
             int batchSize = 100,
-            LoggingLevelSwitch levelSwitch = null)
+            LoggingLevelSwitch levelSwitch = null,
+            LogOptions logOptions = null)
         {
             if (loggerConfiguration == null)
                 throw new ArgumentNullException(nameof(loggerConfiguration));
@@ -87,7 +89,8 @@ namespace Serilog
                     connectionProtocol,
                     timeToLive,
                     logBufferSize,
-                    batchSize),
+                    batchSize,
+                    logOptions),
                 restrictedToMinimumLevel,
                 levelSwitch);
         }
@@ -128,7 +131,8 @@ namespace Serilog
             int? timeToLive = null,
             int logBufferSize = 25_000,
             int batchSize = 100,
-            LoggingLevelSwitch levelSwitch = null)
+            LoggingLevelSwitch levelSwitch = null,
+            LogOptions logOptions = null)
         {
             if (loggerConfiguration == null)
                 throw new ArgumentNullException(nameof(loggerConfiguration));
@@ -154,7 +158,8 @@ namespace Serilog
                     connectionProtocol?.ToUpper() == "TCP" ? Protocol.Tcp : Protocol.Https,
                     timeSpan,
                     logBufferSize,
-                    batchSize),
+                    batchSize,
+                    logOptions),
                 restrictedToMinimumLevel,
                 levelSwitch);
         }
