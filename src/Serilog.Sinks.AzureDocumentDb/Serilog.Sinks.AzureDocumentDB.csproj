@@ -11,7 +11,7 @@
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>Serilog.snk</AssemblyOriginatorKeyFile>
         <AssemblyVersion>4.5.0.0</AssemblyVersion>
-        <Version>4.5.0</Version>
+        <Version>4.5.0-ts</Version>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
         <PackageTags>serilog;sinks;azure;documentdb</PackageTags>
         <PackageIconUrl>http://serilog.net/images/serilog-sink-nuget.png</PackageIconUrl>

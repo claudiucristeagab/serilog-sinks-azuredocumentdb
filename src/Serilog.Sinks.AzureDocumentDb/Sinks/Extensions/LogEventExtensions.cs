@@ -53,8 +53,8 @@ namespace Serilog.Sinks.Extensions
 
             eventObject.Add("EventIdHash", ComputeMessageTemplateHash(messageTemplateText));
             eventObject.Add("Timestamp", storeTimestampInUtc
-                ? logEvent.Timestamp.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss.fffzzz")
-                : logEvent.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fffzzz"));
+                ? logEvent.Timestamp.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ")
+                : logEvent.Timestamp.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"));
 
             eventObject.Add("Level", logEvent.Level.ToString());
             eventObject.Add("Message", logEvent.RenderMessage(formatProvider));
