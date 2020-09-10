@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using System;
-using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.Cosmos;
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
@@ -62,7 +62,7 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null,
             bool storeTimestampInUtc = true,
-            Protocol connectionProtocol = Protocol.Https,
+            ConnectionMode connectionProtocol = ConnectionMode.Gateway,
             TimeSpan? timeToLive = null,
             int logBufferSize = 25_000,
             int batchSize = 100,
@@ -127,7 +127,7 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null,
             bool storeTimestampInUtc = false,
-            string connectionProtocol = "https",
+            ConnectionMode connectionProtocol = ConnectionMode.Gateway,
             int? timeToLive = null,
             int logBufferSize = 25_000,
             int batchSize = 100,
@@ -155,7 +155,7 @@ namespace Serilog
                     collectionName,
                     formatProvider,
                     storeTimestampInUtc,
-                    connectionProtocol?.ToUpper() == "TCP" ? Protocol.Tcp : Protocol.Https,
+                    connectionProtocol,
                     timeSpan,
                     logBufferSize,
                     batchSize,
