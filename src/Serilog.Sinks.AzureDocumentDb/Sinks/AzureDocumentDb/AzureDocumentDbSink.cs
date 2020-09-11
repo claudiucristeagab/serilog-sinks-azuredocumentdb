@@ -47,6 +47,7 @@ namespace Serilog.Sinks.AzureDocumentDb
             string authorizationKey,
             string databaseName,
             string collectionName,
+            string partitionKey,
             IFormatProvider formatProvider,
             bool storeTimestampInUtc,
             Microsoft.Azure.Cosmos.ConnectionMode connectionProtocol,
@@ -58,7 +59,7 @@ namespace Serilog.Sinks.AzureDocumentDb
         {
             _formatProvider   = formatProvider;
 
-            _partitionKey = "/Properties/AuditType";
+            _partitionKey = partitionKey; // "/Properties/AuditType"
 
             if ((timeToLive != null) && (timeToLive.Value != TimeSpan.MaxValue))
                 _timeToLive = (int) timeToLive.Value.TotalSeconds;
